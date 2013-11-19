@@ -5,8 +5,9 @@
   "bin": "./collectoid.js",
   "dependencies": {
     "async": "~0.2.9",
+	"busboy": "0.0.12",
     "cluster": "~0.7.7",
-	"crypto": "0.0.3",
+    "crypto": "0.0.3",
     "mime": "~1.2.11",
     "nconf": "~0.6.8",
     "rconsole": "~0.2.0",
@@ -15,5 +16,8 @@
   },
   "optionalDependencies": {
     "hiredis": "~0.1.15"
+  },
+  "devDependencies": {
+    "jshint": ">=2.3.0"
   }
 }

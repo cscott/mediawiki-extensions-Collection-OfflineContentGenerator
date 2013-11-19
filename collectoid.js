@@ -33,6 +33,7 @@
 
 var cluster = require('cluster');
 var nconf = require('nconf');
+var os = require('os');
 require('rconsole');
 var sleep = require('sleep');
 
@@ -71,10 +72,13 @@ if (cluster.isMaster) {
 	var respawnWorkers = true;
 	var workerTypes = {};
 	var newWorker = null;
+	var autoThreads = 0;
 	var i = 0;
 
 	/* --- Thread management --- */
 	function gracefulShutdown() {
+		var stillAlive = 0;
+
 		respawnWorkers = false;
 		console.info('Beginning graceful shutdown');
 
@@ -84,7 +88,7 @@ if (cluster.isMaster) {
 		}
 
 		do {
-			var stillAlive = Object.keys(cluster.workers).length;
+			stillAlive = Object.keys(cluster.workers).length;
 			if (stillAlive > 0) {
 				console.info('Still awaiting death of %d workers', stillAlive);
 				sleep.sleep(1);
@@ -128,7 +132,12 @@ if (cluster.isMaster) {
 		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: 'frontend'});
 		workerTypes[newWorker.process.pid] = 'frontend';
 	}
-	for (i = 0; i < nconf.get('coordinator:backend_threads'); i++) {
+
+	autoThreads = nconf.get('coordinator:backend_threads');
+	if (autoThreads === 'auto') {
+		autoThreads = os.cpus().length;
+	}
+	for (i = 0; i < autoThreads; i++) {
 		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: 'backend'});
 		workerTypes[newWorker.process.pid] = 'backend';
 	}

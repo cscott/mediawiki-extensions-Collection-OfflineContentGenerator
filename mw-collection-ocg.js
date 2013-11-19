@@ -158,7 +158,7 @@ if (cluster.isMaster) {
 
 	process.on('SIGINT', function() {
 		// Master wants us to die :(
-		console.debug('Frontend worker received SIGINT');
+		console.debug('%s worker received SIGINT', process.env.COLLECTOID_CHILD_TYPE);
 		child.stop(process.exit);
 	});
 

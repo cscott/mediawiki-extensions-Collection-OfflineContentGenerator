@@ -1,13 +1,21 @@
 {
-  "name": "collectoid",
-  "description": "Backend render server for the collection extension",
+  "name": "mediawiki-collection-ocg",
+  "description": "Render service (Offline Content Generator) for the MediaWiki extension Collection",
   "version": "0.0.1",
-  "bin": "./collectoid.js",
+  "homepage": "https://www.mediawiki.org/wiki/Extension:Collection",
+  "bugs": { "url": "https://bugzilla.wikimedia.org/enter_bug.cgi?product=MediaWiki%20extensions&component=Collection" },
+  "bin": "./mw-collection-ocg.js",
+  "repository": {
+    "type": "git",
+    "url": "https://gerrit.wikimedia.org/r/p/mediawiki/extensions/Collection/OfflineContentGenerator.git"
+  },
+  "keywords": [
+    "mediawiki"
+  ],
+  "license": "GPLv2",
   "dependencies": {
     "async": "~0.2.9",
 	"busboy": "0.0.12",
-    "cluster": "~0.7.7",
-    "crypto": "0.0.3",
     "mime": "~1.2.11",
     "nconf": "~0.6.8",
     "rconsole": "~0.2.0",

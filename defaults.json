@@ -1,0 +1,21 @@
+{
+	"coordinator": {
+		"frontend_threads": 2,
+		"backend_threads": "auto"
+	},
+	"frontend": {
+		"threads": 2,
+		"socket": null,
+		"port": 17080,
+		"address": null
+	},
+	"redis": {
+		"host": "localhost",
+		"port": 6379,
+		"password": null,
+		"retry_max_delay": 60000,
+
+		"job_queue_name": "render_job_queue",
+		"status_set_name": "job_status"
+	}
+}

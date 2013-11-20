@@ -1,7 +1,8 @@
 {
 	"coordinator": {
 		"frontend_threads": 2,
-		"backend_threads": "auto"
+		"backend_threads": "auto",
+		"runtime_user": null
 	},
 	"frontend": {
 		"socket": null,

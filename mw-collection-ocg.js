@@ -55,6 +55,15 @@ console.set({
 	title: 'collectoid'
 });
 
+/* === Downgrade our permissions =========================================== */
+var runtimeUser = nconf.get('coordinator:runtime_user') || process.getuid();
+try {
+	process.setuid(runtimeUser);
+} catch (err) {
+	console.error('Could not set user to "%s": %s', runtimeUser, err);
+	process.exit(1);
+}
+
 /* === Fork the heck out of ourselves! ========================================
 * The basic idea is that we have this controlling process which launches and
 * maintains a configurable number of child threads. The type of thread a child

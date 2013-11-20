@@ -41,13 +41,13 @@ var sleep = require('sleep');
 nconf
 	.argv({
 		c: {
-			alias: 'config=file',
+			alias: 'config-file',
 			describe: 'Local configuration file',
-			default: '/etc/collectoid.json'
+			default: '/etc/mw-collection-ocg.json'
 		}
 	})
-	.file({file: nconf.get('config=file')})
-	.file({file: 'defaults.json'});
+	.file({file: nconf.get('config-file')})
+	.defaults(require('./defaults.json'));
 
 /* === Initial Logging ===================================================== */
 console.set({

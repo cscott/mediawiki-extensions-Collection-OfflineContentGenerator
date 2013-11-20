@@ -4,7 +4,6 @@
 		"backend_threads": "auto"
 	},
 	"frontend": {
-		"threads": 2,
 		"socket": null,
 		"port": 17080,
 		"address": null
@@ -17,5 +16,13 @@
 
 		"job_queue_name": "render_job_queue",
 		"status_set_name": "job_status"
+	},
+	"backend": {
+		"writers": {
+			"rdf2latex": "./latex_renderer/bin/mw-latexer"
+		},
+
+		"temp_dir": null,
+		"bundler_bin": "./bundler/bin/mw-bundler"
 	}
 }

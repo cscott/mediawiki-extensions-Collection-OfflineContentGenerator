@@ -19,11 +19,18 @@
 		"status_set_name": "job_status"
 	},
 	"backend": {
+		"bundler": {
+			"bin": "./bundler/bin/mw-bundler",
+			"parsoid_api": "http://localhost/",
+			"parsoid_prefix": "localhost"
+		},
 		"writers": {
-			"rdf2latex": "./latex_renderer/bin/mw-latexer"
+			"rdf2latex": {
+				"bin": "./latex_renderer/bin/mw-latexer",
+				"extension": ".pdf"
+			}
 		},
 
-		"temp_dir": null,
-		"bundler_bin": "./bundler/bin/mw-bundler"
+		"temp_dir": null
 	}
 }

@@ -85,7 +85,7 @@ if (cluster.isMaster) {
 	var i = 0;
 
 	/* --- Thread management --- */
-	function gracefulShutdown() {
+	var gracefulShutdown = function gracefulShutdown() {
 		var stillAlive = 0;
 
 		respawnWorkers = false;
@@ -106,9 +106,9 @@ if (cluster.isMaster) {
 				process.exit();
 			}
 		} while (stillAlive > 0);
-	}
+	};
 
-	function immediateShutdown() {
+	var immediateShutdown = function immediateShutdown() {
 		respawnWorkers = false;
 		console.info('Shutting down immediately');
 
@@ -118,7 +118,8 @@ if (cluster.isMaster) {
 			workers[id].destroy();
 		});
 		process.exit(1);
-	}
+	};
+
 	process.on('SIGINT', gracefulShutdown);
 	process.on('SIGTERM', gracefulShutdown);
 	process.on('SIGHUP', immediateShutdown);

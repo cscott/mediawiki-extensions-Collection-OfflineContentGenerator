@@ -32,31 +32,35 @@
  */
 
 var cluster = require('cluster');
-var nconf = require('nconf');
+var commander = require('commander');
 var os = require('os');
 require('rconsole');
 var sleep = require('sleep');
 
 /* === Configuration Options & File ======================================== */
-nconf
-	.argv({
-		c: {
-			alias: 'config-file',
-			describe: 'Local configuration file',
-			default: '/etc/mw-collection-ocg.json'
-		}
-	})
-	.file({file: nconf.get('config-file')})
-	.defaults(require('./defaults.json'));
+var config = require('./defaults.js');
+commander
+	.version('0.0.1')
+	.option('-c', '--config', 'Path to the local configuration file', '/etc/mw-collection-ocg.js')
+	.parse(process.argv);
+
+try {
+	if (commander.config) {
+		config = require(commander.config)(config);
+	}
+} catch(err) {
+	console.log("Could not open configuration file %s! %s", commander.config, err);
+
+}
 
 /* === Initial Logging ===================================================== */
 console.set({
 	facility: 'local0',
-	title: 'collectoid'
+	title: 'mw-collection-ocg'
 });
 
 /* === Downgrade our permissions =========================================== */
-var runtimeUser = nconf.get('coordinator:runtime_user') || process.getuid();
+var runtimeUser = config.coordinator.runtime_user || process.getuid();
 try {
 	process.setuid(runtimeUser);
 } catch (err) {
@@ -138,12 +142,12 @@ if (cluster.isMaster) {
 		delete workerTypes[worker.process.pid];
 	});
 
-	for (i = 0; i < nconf.get('coordinator:frontend_threads'); i++) {
+	for (i = 0; i < config.coordinator.frontend_threads; i++) {
 		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: 'frontend'});
 		workerTypes[newWorker.process.pid] = 'frontend';
 	}
 
-	autoThreads = nconf.get('coordinator:backend_threads');
+	autoThreads = config.coordinator.backend_threads;
 	if (autoThreads === 'auto') {
 		autoThreads = os.cpus().length;
 	}
@@ -154,8 +158,8 @@ if (cluster.isMaster) {
 
 } else {
 	var types = {
-		'frontend': './lib/frontend.js',
-		'backend': './lib/backend.js'
+		'frontend': './lib/threads/frontend.js',
+		'backend': './lib/threads/backend.js'
 	};
 	var child;
 
@@ -172,6 +176,6 @@ if (cluster.isMaster) {
 		child.stop(process.exit);
 	});
 
-	child.init(nconf);
+	child.init(config);
 	child.start();
 }

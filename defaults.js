@@ -1,4 +1,11 @@
-{
+/**
+ * Default configuration file for the Collection extension Offline Content
+ * Generator. Local settings should be in /etc/mw-collection-ocg.js with
+ * settings modified in a function like:
+ *
+ * module.exports = function(config) { config.foo = 'bar'; }
+ */
+module.exports = {
 	"coordinator": {
 		"frontend_threads": 2,
 		"backend_threads": "auto",

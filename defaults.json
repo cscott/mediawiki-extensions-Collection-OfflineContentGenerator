@@ -22,13 +22,13 @@
 	},
 	"backend": {
 		"bundler": {
-			"bin": "./bundler/bin/mw-bundler",
+			"bin": "./bundler/bin/mw-ocg-bundler",
 			"parsoid_api": "http://localhost/",
 			"parsoid_prefix": "localhost"
 		},
 		"writers": {
 			"rdf2latex": {
-				"bin": "./latex_renderer/bin/mw-latexer",
+				"bin": "./latex_renderer/bin/mw-ocg-latexer",
 				"extension": ".pdf"
 			}
 		},

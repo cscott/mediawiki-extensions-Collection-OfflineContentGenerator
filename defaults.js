@@ -16,7 +16,7 @@ module.exports = {
 	"frontend": {
 		"socket": null,
 		"port": 17080,
-		"address": null
+		"address": "localhost"
 	},
 	"redis": {
 		"host": "localhost",

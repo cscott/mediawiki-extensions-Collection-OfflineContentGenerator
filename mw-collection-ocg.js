@@ -85,12 +85,12 @@ if (cluster.isMaster) {
 	var respawnWorkers = true;
 	var workerTypes = {};
 	var newWorker = null;
-	var autoThreads = 0;
-	var i = 0;
+	var autoThreads;
+	var i;
 
 	/* --- Thread management --- */
 	var gracefulShutdown = function gracefulShutdown() {
-		var stillAlive = 0;
+		var stillAlive;
 
 		respawnWorkers = false;
 		console.info('Beginning graceful shutdown');

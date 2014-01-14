@@ -50,13 +50,12 @@ try {
 	}
 } catch(err) {
 	console.log("Could not open configuration file %s! %s", commander.config, err);
-
 }
 
 /* === Initial Logging ===================================================== */
 console.set({
 	facility: 'local0',
-	title: 'mw-collection-ocg'
+	title: 'mw-ocg-service'
 });
 
 /* === Downgrade our permissions =========================================== */

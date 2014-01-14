@@ -42,4 +42,4 @@ module.exports = {
 
 		"temp_dir": null
 	}
-}
+};

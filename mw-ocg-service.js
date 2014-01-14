@@ -41,7 +41,7 @@ var sleep = require('sleep');
 var config = require('./defaults.js');
 commander
 	.version('0.0.1')
-	.option('-c', '--config', 'Path to the local configuration file', '/etc/mw-collection-ocg.js')
+	.option('-c, --config', 'Path to the local configuration file', '/etc/mw-ocg-service.js')
 	.parse(process.argv);
 
 try {

@@ -1,6 +1,0 @@
-[submodule "bundler"]
-	path = bundler
-	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Collection/OfflineContentGenerator/bundler
-[submodule "latex_renderer"]
-	path = latex_renderer
-	url = https://gerrit.wikimedia.org/r/mediawiki/extensions/Collection/OfflineContentGenerator/latex_renderer

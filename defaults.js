@@ -16,7 +16,7 @@ module.exports = {
 	"frontend": {
 		"socket": null,
 		"port": 17080,
-		"address": "localhost"
+		"address": null
 	},
 	"redis": {
 		"host": "localhost",
@@ -29,14 +29,18 @@ module.exports = {
 	},
 	"backend": {
 		"bundler": {
-			"bin": "./bundler/bin/mw-ocg-bundler",
+			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
 			"parsoid_api": "http://localhost/",
 			"parsoid_prefix": "localhost"
 		},
 		"writers": {
 			"rdf2latex": {
-				"bin": "./latex_renderer/bin/mw-ocg-latexer",
+				"bin": "../mw-ocg-latexer/bin/mw-ocg-latexer",
 				"extension": ".pdf"
+			},
+			"rdf2text": {
+				"bin": "../mw-ocg-texter/bin/mw-ocg-texter",
+				"extension": ".txt"
 			}
 		},
 

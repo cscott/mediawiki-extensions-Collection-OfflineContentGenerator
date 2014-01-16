@@ -1,5 +1,5 @@
 {
-  "name": "mediawiki-collection-ocg",
+  "name": "mw-ocg-service",
   "description": "Render service (Offline Content Generator) for the MediaWiki extension Collection",
   "version": "0.0.1",
   "homepage": "https://www.mediawiki.org/wiki/Extension:Collection",

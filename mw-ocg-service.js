@@ -35,7 +35,6 @@ var cluster = require('cluster');
 var commander = require('commander');
 var os = require('os');
 require('rconsole');
-var sleep = require('sleep');
 
 /* === Configuration Options & File ======================================== */
 var config = require('./defaults.js');
@@ -89,8 +88,6 @@ if (cluster.isMaster) {
 
 	/* --- Thread management --- */
 	var gracefulShutdown = function gracefulShutdown() {
-		var stillAlive;
-
 		respawnWorkers = false;
 		console.info('Beginning graceful shutdown');
 
@@ -99,16 +96,17 @@ if (cluster.isMaster) {
 			cluster.workers[id].kill('SIGINT');
 		}
 
-		do {
-			stillAlive = Object.keys(cluster.workers).length;
+		var infoAndExit = function() {
+			var stillAlive = Object.keys(cluster.workers).length;
 			if (stillAlive > 0) {
 				console.info('Still awaiting death of %d workers', stillAlive);
-				sleep.sleep(1);
+				setTimeout( infoAndExit, 1000 );
 			} else {
 				console.info('All threads killed. Exiting.');
 				process.exit();
 			}
-		} while (stillAlive > 0);
+		};
+		infoAndExit();
 	};
 
 	var immediateShutdown = function immediateShutdown() {

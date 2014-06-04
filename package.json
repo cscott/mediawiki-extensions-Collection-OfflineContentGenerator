@@ -18,7 +18,7 @@
   "dependencies": {
     "async": "~0.2.9",
     "busboy": "0.0.12",
-	"commander": "~2.1.0",
+    "commander": "~2.1.0",
     "mime": "~1.2.11",
     "rconsole": "~0.2.0",
     "redis": "~0.9.0"

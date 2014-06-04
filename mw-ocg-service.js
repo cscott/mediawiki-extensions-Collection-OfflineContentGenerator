@@ -33,6 +33,7 @@
 
 var cluster = require('cluster');
 var commander = require('commander');
+var StatsD = require('./lib/statsd.js');
 var os = require('os');
 require('rconsole');
 
@@ -40,7 +41,7 @@ require('rconsole');
 var config = require('./defaults.js');
 commander
 	.version('0.0.1')
-	.option('-c, --config <path>', 'Path to the local configuration file', '/etc/mw-ocg-service.js')
+	.option('-c, --config <path>', 'Path to the local configuration file')
 	.parse(process.argv);
 
 try {
@@ -49,6 +50,7 @@ try {
 	}
 } catch(err) {
 	console.log("Could not open configuration file %s! %s", commander.config, err);
+	process.exit(1);
 }
 
 /* === Initial Logging ===================================================== */
@@ -56,15 +58,16 @@ console.set({
 	facility: 'local0',
 	title: 'mw-ocg-service'
 });
-
-/* === Downgrade our permissions =========================================== */
-var runtimeUser = config.coordinator.runtime_user || process.getuid();
-try {
-	process.setuid(runtimeUser);
-} catch (err) {
-	console.error('Could not set user to "%s": %s', runtimeUser, err);
-	process.exit(1);
-}
+global.statsd = new StatsD(
+	config.reporting.statsd_server,
+	config.reporting.statsd_port,
+	config.reporting.prefix,
+	'',
+	config.reporting.is_txstatsd,
+	false, // Don't globalize, we're doing that here
+	true,  // Do cache DNS queries
+	config.reporting.enable
+);
 
 /* === Fork the heck out of ourselves! ========================================
 * The basic idea is that we have this controlling process which launches and
@@ -82,7 +85,7 @@ try {
 if (cluster.isMaster) {
 	var respawnWorkers = true;
 	var workerTypes = {};
-	var newWorker = null;
+	var lastRestart = {};
 	var autoThreads;
 	var i;
 
@@ -125,6 +128,14 @@ if (cluster.isMaster) {
 	process.on('SIGTERM', gracefulShutdown);
 	process.on('SIGHUP', immediateShutdown);
 
+	var spawnWorker = function spawnWorker(workerType) {
+		var newWorker = null;
+		lastRestart[workerType] = Date.now();
+		statsd.increment(workerType + '.restarts');
+		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: workerType});
+		workerTypes[newWorker.process.pid] = workerType;
+	};
+
 	cluster.on('disconnect', function(worker) {
 		console.info(
 			'Worker (pid %d) has disconnected. Suicide: %s. Restarting: %s.',
@@ -133,15 +144,19 @@ if (cluster.isMaster) {
 			respawnWorkers
 		);
 		if (respawnWorkers) {
-			newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: workerTypes[worker.process.pid]});
-			workerTypes[newWorker.process.pid] = workerTypes[worker.process.pid];
+			if (lastRestart[workerTypes[worker.process.pid]] > Date.now() - 1000) {
+				// Only allow a restart of a backend thread once a second
+				console.info("Cannot immediately respawn thread. Waiting 1s to avoid forkbombing.");
+				setTimeout(spawnWorker, 1000, workerTypes[worker.process.pid]);
+			} else {
+				spawnWorker(workerTypes[worker.process.pid]);
+			}
 		}
 		delete workerTypes[worker.process.pid];
 	});
 
 	for (i = 0; i < config.coordinator.frontend_threads; i++) {
-		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: 'frontend'});
-		workerTypes[newWorker.process.pid] = 'frontend';
+		spawnWorker('frontend');
 	}
 
 	autoThreads = config.coordinator.backend_threads;
@@ -149,8 +164,7 @@ if (cluster.isMaster) {
 		autoThreads = os.cpus().length;
 	}
 	for (i = 0; i < autoThreads; i++) {
-		newWorker = cluster.fork({COLLECTOID_CHILD_TYPE: 'backend'});
-		workerTypes[newWorker.process.pid] = 'backend';
+		spawnWorker('backend');
 	}
 
 } else {

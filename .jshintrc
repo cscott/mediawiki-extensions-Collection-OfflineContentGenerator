@@ -1,12 +1,18 @@
 {
 	"predef": [
-		"statsd"
+		"statsd",
+
+		"setImmediate",
+
+		"Map",
+		"Set"
 	],
 
 	"bitwise": true,
 	"curly": true,
 	"eqeqeq": true,
 	"immed": true,
+	//"latedef": true,
 	"latedef": "nofunc",
 	"newcap": true,
 	"noarg": true,
@@ -14,9 +20,8 @@
 	"nonew": true,
 	"regexp": false,
 	"undef": true,
-	"strict": false,
+	"strict": true,
 	"trailing": true,
-	"unused":"vars",
 
 	"smarttabs": true,
 	"multistr": true,
@@ -25,4 +30,5 @@
 
 	"nomen": false,
 	"loopfunc": true
+	//"onevar": true
 }

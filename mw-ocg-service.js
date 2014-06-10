@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"use strict";
 
 /**
  * Collection Extension render wrangler

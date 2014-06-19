@@ -22,12 +22,17 @@
     "async": "~0.2.9",
     "busboy": "0.0.12",
     "commander": "~2.2.0",
+    "es6-shim": "~0.12.0",
     "mime": "~1.2.11",
-    "rconsole": "~0.2.0",
-    "redis": "~0.9.0"
+    "prfun": "~0.1.0",
+    "redis": "~0.9.0",
+    "winston": "~0.7.3",
+    "sprintf-js": "0.0.7"
   },
   "optionalDependencies": {
-    "hiredis": "~0.1.15"
+    "hiredis": "~0.1.15",
+    "winston-graylog2": "~0.1.10",
+    "winston-posix-syslog": "0.0.7"
   },
   "devDependencies": {
     "jshint": ">=2.3.0"

@@ -17,12 +17,19 @@ service mw-collection-ocg start
 ## Binary node modules
 The following node binary modules are required:
 * hiredis
-* rconsole
-* sleep
 * sqlite3 (for `bundler` and `latex_renderer`)
 
 Be aware of these when deploying to a new node version or machine
 architecture.  You may need to `npm rebuild <package name>`.
+
+## Logging
+This software uses the winston logging framework. By default the framework
+only logs to the system console. To add additional log transports and make it
+useful; in the config file add lines like:
+
+```
+logger.add( require( 'winston-posix-syslog' ).PosixSyslog, {} );
+```
 
 ## License
 

@@ -1,10 +1,12 @@
 {
 	"predef": [
+		"logger",
 		"statsd",
 
 		"setImmediate",
 
 		"Map",
+		"Promise",
 		"Set"
 	],
 

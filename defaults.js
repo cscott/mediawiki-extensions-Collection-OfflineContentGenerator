@@ -34,21 +34,30 @@ module.exports = {
 	"backend": {
 		"bundler": {
 			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
+			"additionalArgs": [],
+
 			"parsoid_api": "http://localhost/",
 			"parsoid_prefix": "localhost"
 		},
 		"writers": {
 			"rdf2latex": {
 				"bin": "../mw-ocg-latexer/bin/mw-ocg-latexer",
+				"additionalArgs": [],
 				"extension": ".pdf"
 			},
 			"rdf2text": {
 				"bin": "../mw-ocg-texter/bin/mw-ocg-texter",
+				"additionalArgs": [],
 				"extension": ".txt"
 			}
 		},
 
-		"temp_dir": null
+		/** {string} Working directory for the service. If null will be in the OS temp dir. */
+		"temp_dir": null,
+		/** {string} Directory for final rendered output. If null will be temp_dir/ocg-output */
+		"output_dir": null,
+		/** {string|null} Directory where failed jobs will be stored. If null will not be stored. */
+		"post_mortem_dir": null
 	},
 	/** Redis is used in both the frontend and backend for queueing jobs and job
 	 * metadata storage.

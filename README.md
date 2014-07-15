@@ -31,6 +31,13 @@ useful; in the config file add lines like:
 logger.add( require( 'winston-posix-syslog' ).PosixSyslog, {} );
 ```
 
+## Maintenance
+The health check ```command=health``` will return the number of objects
+currently in the job queue. If the job queue is too long, the operator can
+either wait for the queue to clear, or log into the redis server with the
+rediscli and run ```DEL``` with the keyname given by ```JobQueue.name``` in
+the returned health hash, equivilant to the value of ```config.redis.job_queue_name```
+
 ## License
 
 (c) 2014 by Brad Jorsch, C. Scott Ananian, Matthew Walker, Max Seminik

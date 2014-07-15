@@ -32,7 +32,14 @@ module.exports = {
 	},
 	/** Configuration for the backend bundling & and rendering process threads. */
 	"backend": {
+		"max_thread_exec_time": 15 * 60 * 1000,
+
 		"bundler": {
+			/** {int} Maximum time, in seconds, that the process will be allowed to execute.
+			 * After the expiration time a SIGTERM will be issued. A value of zero means that
+			 * no time limit is enforced.
+			 */
+			"max_execution_time": 0,
 			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
 			"additionalArgs": [],
 
@@ -41,11 +48,23 @@ module.exports = {
 		},
 		"writers": {
 			"rdf2latex": {
+				/** {int} Maximum time, in seconds, that the process will be allowed to execute.
+				 * After the expiration time a SIGTERM will be issued. A value of zero means that
+				 * no time limit is enforced.
+				 */
+				"max_execution_time": 0,
+
 				"bin": "../mw-ocg-latexer/bin/mw-ocg-latexer",
 				"additionalArgs": [],
 				"extension": ".pdf"
 			},
 			"rdf2text": {
+				/** {int} Maximum time, in seconds, that the process will be allowed to execute.
+				 * After the expiration time a SIGTERM will be issued. A value of zero means that
+				 * no time limit is enforced.
+				 */
+				"max_execution_time": 0,
+
 				"bin": "../mw-ocg-texter/bin/mw-ocg-texter",
 				"additionalArgs": [],
 				"extension": ".txt"

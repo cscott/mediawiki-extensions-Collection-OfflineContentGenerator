@@ -69,7 +69,12 @@ module.exports = {
 		"retry_max_delay": 60000,
 
 		"job_queue_name": "render_job_queue",
-		"status_set_name": "job_status"
+		"status_set_name": "job_status",
+
+		/** {int} When the job queue is larger than this, new jobs will be rejected. A zero value
+		 * means no limit to the number of jobs that can be in the queue.
+		 */
+		"max_job_queue_length": 0
 	},
 	/** Active metric reporting via the StatsD protocol. General health can be obtained by querying
 	 * the frontend with a HTTP GET ?request=health query

@@ -1,6 +1,5 @@
 {
 	"predef": [
-		"logger",
 		"statsd",
 
 		"setImmediate",

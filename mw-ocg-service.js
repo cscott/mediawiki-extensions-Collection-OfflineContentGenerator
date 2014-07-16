@@ -37,7 +37,7 @@ var commander = require( 'commander' );
 var path = require( 'path' );
 var StatsD = require( './lib/statsd.js' );
 var os = require( 'os' );
-global.logger = require( 'winston' );
+var logger = require( 'winston' );
 
 /* === Configuration Options & File ======================================== */
 var config = require( './defaults.js' );
@@ -62,7 +62,22 @@ try {
 }
 
 /* === Initial Logging ===================================================== */
+// Remove the default logger
+logger.remove( logger.transports.Console );
+// Now go through the hash and add all the required transports
+for ( var transport in config.logging ) {
+	console.info(JSON.stringify(config.logging));
+	if ( config.logging.hasOwnProperty( transport ) ) {
+		var parts = transport.split( '/' );
+		var classObj = require( parts.shift() );
+		parts.forEach( function( k ) {
+			classObj = classObj[k];
+		} );
+		logger.add( classObj, config.logging[transport] );
+	}
+}
 logger.extend( console );
+
 global.statsd = new StatsD(
 	config.reporting.statsd_server,
 	config.reporting.statsd_port,

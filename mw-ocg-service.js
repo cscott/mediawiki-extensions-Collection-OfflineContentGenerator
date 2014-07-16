@@ -66,7 +66,6 @@ try {
 logger.remove( logger.transports.Console );
 // Now go through the hash and add all the required transports
 for ( var transport in config.logging ) {
-	console.info(JSON.stringify(config.logging));
 	if ( config.logging.hasOwnProperty( transport ) ) {
 		var parts = transport.split( '/' );
 		var classObj = require( parts.shift() );

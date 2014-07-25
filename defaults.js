@@ -118,5 +118,22 @@ module.exports = {
 	 */
 	"logging": {
 		"winston/transports/Console": { level: "info" }
+	},
+	/** Garbage collection thread */
+	"garbage_collection": {
+		/** Seconds between garbage collection runs */
+		every: 0.25 * 24 * 60 * 60,
+		/** Lifetime, in seconds, of a job status object in redis */
+		job_lifetime: 5 * 24 * 60 * 60,
+		/** Lifetime, in seconds, of any successful job artifacts on the file system */
+		job_file_lifetime: 5.5 * 24 * 60 * 60,
+		/** Lifetime, in seconds, of a job status object that failed in redis */
+		failed_job_lifetime: 24 * 60 * 60,
+		/** Lifetime, in seconds, of an object in the temp file system. Must be longer
+		 * than the longest expected job runtime. (We check ctime not atime)
+		 */
+	  	temp_file_lifetime: 0.5 * 24 * 60 * 60,
+		/** Lifetime, in seconds, of an object in the post mortem directory. */
+	  	postmortem_file_lifetime: 5 * 24 * 60 * 60
 	}
 };

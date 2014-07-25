@@ -137,10 +137,9 @@ if ( cluster.isMaster ) {
 
 		var workers = cluster.workers;
 		Object.keys( workers ).forEach( function ( id ) {
-			console.info( 'Killing frontend worker %s', id );
+			console.info( 'Killing worker %s', id );
 			workers[id].destroy();
-		}
-		);
+		} );
 		process.exit( 1 );
 	};
 
@@ -178,6 +177,8 @@ if ( cluster.isMaster ) {
 		delete workerTypes[worker.process.pid];
 	}
 	);
+
+	spawnWorker( 'gc' );
 
 	for ( i = 0; i < config.coordinator.frontend_threads; i++ ) {
 		spawnWorker( 'frontend' );

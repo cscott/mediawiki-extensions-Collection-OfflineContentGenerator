@@ -195,7 +195,8 @@ if ( cluster.isMaster ) {
 } else {
 	var types = {
 		'frontend': './lib/threads/frontend.js',
-		'backend':  './lib/threads/backend.js'
+		'backend':  './lib/threads/backend.js',
+		'gc': './lib/threads/gc.js'
 	};
 	var child;
 

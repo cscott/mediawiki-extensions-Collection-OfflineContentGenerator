@@ -87,8 +87,8 @@ module.exports = {
 		"password": null,
 		"retry_max_delay": 60000,
 
-		"job_queue_name": "render_job_queue",
-		"status_set_name": "job_status",
+		"job_queue_name": "ocg_render_job_queue",
+		"status_set_name": "ocg_job_status",
 
 		/** {int} When the job queue is larger than this, new jobs will be rejected. A zero value
 		 * means no limit to the number of jobs that can be in the queue.

@@ -32,8 +32,6 @@ module.exports = {
 	},
 	/** Configuration for the backend bundling & and rendering process threads. */
 	"backend": {
-		"max_thread_exec_time": 15 * 60 * 1000,
-
 		"bundler": {
 			/** {int} Maximum time, in seconds, that the process will be allowed to execute.
 			 * After the expiration time a SIGTERM will be issued. A value of zero means that

@@ -8,11 +8,17 @@ the [mw-ocg-bundler] and [mw-ocg-latexer]/[mw-ocg-texter]/etc backends.
 
 ## Installation on Ubuntu
 
-```
+Ensure that you have a redis server installed somewhere.
+
+```sh
+cd <repodir> ; npm install
 ln -s <repodir>/mw-collection-ocg.conf /etc/init
 initctl reload-configuration
 service mw-collection-ocg start
 ```
+
+Create `/etc/mw-collection-ocg.js` to configure the render service.
+See [the default configuration](./defaults.js) for more details.
 
 ## Binary node modules
 The following node binary modules are required:

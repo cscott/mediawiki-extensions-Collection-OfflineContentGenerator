@@ -6,6 +6,9 @@
  * module.exports = function(config) { config.foo = 'bar'; }
  */
 module.exports = {
+	/** Location of local configuration override(s) (if present) */
+	"config": "/etc/mw-collection-ocg.js",
+
 	/** Service management thread, coordinates (re)launching threads and initial global setup */
 	"coordinator": {
 		/** The number of frontend threads to spawn. At the moment we don't have good data on how

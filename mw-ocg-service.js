@@ -34,6 +34,7 @@
 
 var cluster = require( 'cluster' );
 var commander = require( 'commander' );
+var fs = require('fs');
 var path = require( 'path' );
 var StatsD = require( './lib/statsd.js' );
 var os = require( 'os' );
@@ -41,6 +42,18 @@ var logger = require( 'winston' );
 
 /* === Configuration Options & File ======================================== */
 var config = require( './defaults.js' );
+// local configuration overrides
+while (config.config) {
+    var config_file = config.config;
+    delete config.config;
+    try {
+	fs.statSync(config_file);
+    } catch (e) {
+	break; // file not present
+    }
+    config = require( config_file )( config ) || config;
+}
+// parse command-line options (with a possible additional config file override)
 commander
 	.version( '0.0.1' )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
@@ -52,9 +65,9 @@ try {
 			// If the configuration path given is relative, resolve it to be relative
 			// to the current working directory instead of relative to the path of this
 			// file.
-			commander.config = path.resolve( process.cwd, commander.config );
+			commander.config = path.resolve( process.cwd(), commander.config );
 		}
-		config = require( commander.config )( config );
+		config = require( commander.config )( config ) || config;
 	}
 } catch ( err ) {
 	console.error( "Could not open configuration file %s! %s", commander.config, err );

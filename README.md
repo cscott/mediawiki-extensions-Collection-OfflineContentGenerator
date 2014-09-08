@@ -20,10 +20,63 @@ service mw-collection-ocg start
 Create `/etc/mw-collection-ocg.js` to configure the render service.
 See [the default configuration](./defaults.js) for more details.
 
+## Running a development server
+See [wiki](https://wikitech.wikimedia.org/wiki/OCG#Installing_a_development_instance)
+for instructions on how to configure a local [Collection] extension to point
+to this server.  But you can run a local instance with
+```sh
+apt-get install redis-server # runs a local redis service on port 6379
+cd <repodir> ; npm install
+./mw-ocg-service.js # starts a front end ocg service on port 17080
+```
+
+You also need to checkout and install [mw-ocg-bundler] and one or more
+backends ([mw-ocg-latexer], [mw-ocg-texter], etc).  Although you can
+specify any path to these in you like, the default configuration
+expects them to be at the same directory level as `mw-ocg-bundler`,
+eg:
+```
+$OCG/mw-ocg-service (this package)
+$OCG/mw-ocg-bundler
+$OCG/mw-ocg-latexer
+$OCG/mw-ocg-texter
+```
+
+If you have installed [VisualEditor], no additional configuration will
+be necessary: OCG will use the VisualEditor configuration to find an
+appropriate Parsoid service and prefix.
+
+In the absence of VisualEditor, you will still need to install
+[Parsoid], and then configure OCG to use it.  You will launch
+`mw-ocg-service` as `./mw-ocg-service.js -c localsettings.js` and
+create a `localsettings.js` file containing: ```javascript
+// for mw-ocg-service
+module.exports = function(config) {
+  // change the port here if you are running parsoid on a different port
+  config.backend.bundler.parsoid_api = "http://localhost:8000";
+  // the prefix here should match $wgDBname in your LocalSettings.php
+  config.backend.bundler.parsoid_prefix = "localhost";
+}
+```
+Parsoid would in turn be configured with its own `localsettings.js`
+containing:
+```javascript
+// for Parsoid
+exports.setup = function( parsoidConfig ) {
+  // first argument here should match $wgDBname in your LocalSettings.php
+  parsoidConfig.setInterwiki( 'localhost', 'http://localhost/path/to/your/mediawiki/api.php' );
+  // optional:
+  parsoidConfig.serverPort = 8000;
+};
+```
+
 ## Binary node modules
-The following node binary modules are required:
-* hiredis
+The following node binary module is required:
 * sqlite3 (for `bundler` and `latex_renderer`)
+
+In addition, better performance is obtained if the following binary
+module is installed:
+* hiredis (for this service)
 
 Be aware of these when deploying to a new node version or machine
 architecture.  You may need to `npm rebuild <package name>`.
@@ -31,7 +84,7 @@ architecture.  You may need to `npm rebuild <package name>`.
 ## Logging
 This software uses the winston logging framework. By default the framework
 only logs to the system console. To add additional log transports and make it
-useful; in the config file add lines like:
+useful, in the config file add lines like:
 
 ```
 logger.add( require( 'winston-posix-syslog' ).PosixSyslog, {} );
@@ -64,6 +117,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 http://www.gnu.org/copyleft/gpl.html
 
 [Collection]:     https://www.mediawiki.org/wiki/Extension:Collection
+[VisualEditor]:   https://www.mediawiki.org/wiki/Extension:VisualEditor
+[Parsoid]:        https://www.mediawiki.org/wiki/Parsoid
 [mw-ocg-bundler]: https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-bundler
 [mw-ocg-latexer]: https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-latex_renderer
 [mw-ocg-texter]:  https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-text_renderer

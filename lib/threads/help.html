@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>OCG Render Service</title>
+</head>
+
+<body>
+<h1>Offline Content Generator Render Service</h1>
+
+For more details, see the
+<a href="https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator#readme">README for this service at github</a>.
+
+<h2>Maintenance commands</h2>
+<h3>health</h3>
+<form>
+<input type=hidden name=command value=health>
+<input type=submit value="Make Health Request">
+</form>
+
+<h3>render</h3>
+<form>
+<p>Collection Id: <input type=text name="collection_id" /></p>
+<p>Writer: <input type=text name="writer" /></p>
+<input type=submit name="command" value="render">
+</form>
+
+<h3>render_status/download</h3>
+<form>
+<p>Collection Id: <input type=text name="collection_id" /></p>
+<input type=submit name="command" value="render_status">
+<input type=submit name="command" value="download">
+</form>
+
+</body>
+</html>

@@ -49,7 +49,8 @@ appropriate Parsoid service and prefix.
 In the absence of VisualEditor, you will still need to install
 [Parsoid], and then configure OCG to use it.  You will launch
 `mw-ocg-service` as `./mw-ocg-service.js -c localsettings.js` and
-create a `localsettings.js` file containing: ```javascript
+create a `localsettings.js` file containing:
+```javascript
 // for mw-ocg-service
 module.exports = function(config) {
   // change the port here if you are running parsoid on a different port
@@ -58,6 +59,7 @@ module.exports = function(config) {
   config.backend.bundler.parsoid_prefix = "localhost";
 }
 ```
+
 Parsoid would in turn be configured with its own `localsettings.js`
 containing:
 ```javascript

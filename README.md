@@ -6,20 +6,6 @@ Render service (Offline Content Generator) for MediaWiki.
 Ties together the MediaWiki [Collection] extension with
 the [mw-ocg-bundler] and [mw-ocg-latexer]/[mw-ocg-texter]/etc backends.
 
-## Installation on Ubuntu
-
-Ensure that you have a redis server installed somewhere.
-
-```sh
-cd <repodir> ; npm install
-ln -s <repodir>/mw-collection-ocg.conf /etc/init
-initctl reload-configuration
-service mw-collection-ocg start
-```
-
-Create `/etc/mw-collection-ocg.js` to configure the render service.
-See [the default configuration](./defaults.js) for more details.
-
 ## Running a development server
 See [wiki](https://wikitech.wikimedia.org/wiki/OCG#Installing_a_development_instance)
 for instructions on how to configure a local [Collection] extension to point
@@ -71,6 +57,20 @@ exports.setup = function( parsoidConfig ) {
   parsoidConfig.serverPort = 8000;
 };
 ```
+
+## Installing a production server on Ubuntu
+
+Ensure that you have a redis server installed somewhere.
+
+```sh
+cd <repodir> ; npm install
+ln -s <repodir>/mw-collection-ocg.conf /etc/init
+initctl reload-configuration
+service mw-collection-ocg start
+```
+
+Create `/etc/mw-collection-ocg.js` to configure the render service.
+See [the default configuration](./defaults.js) for more details.
 
 ## Binary node modules
 The following node binary module is required:

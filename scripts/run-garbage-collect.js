@@ -31,31 +31,43 @@ require( 'es6-shim' );
 require( 'prfun' );
 
 var commander = require( 'commander' );
+var fs = require( 'fs' );
 var logger = require( 'winston' );
 var path = require( 'path' );
 
 var StatsD = require( '../lib/statsd.js' );
 
 /* === Configuration Options & File ======================================== */
-var config = require( '../defaults.js' ), configPath;
+var config = require( '../defaults.js' );
+// local configuration overrides
+while (config.config) {
+	var config_file = config.config;
+	delete config.config;
+	try {
+		fs.statSync(config_file);
+	} catch (e) {
+		break; // file not present
+	}
+	config = require( config_file )( config ) || config;
+}
+// parse command-line options (with a possible additional config file override)
 commander
 	.version( '0.0.1' )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.parse( process.argv );
 
 try {
-	configPath = commander.config;
-	if ( configPath ) {
-		if ( path.resolve( configPath ) !== path.normalize( configPath ) ) {
+	if ( commander.config ) {
+		if ( path.resolve( commander.config ) !== path.normalize( commander.config ) ) {
 			// If the configuration path given is relative, resolve it to be relative
 			// to the current working directory instead of relative to the path of this
 			// file.
-			configPath = path.resolve( process.cwd, configPath );
+			commander.config = path.resolve( process.cwd(), commander.config );
 		}
-		config = require( configPath )( config );
+		config = require( commander.config )( config ) || config;
 	}
 } catch ( err ) {
-	console.error( "Could not open configuration file %s! %s", configPath, err );
+	console.error( "Could not open configuration file %s! %s", commander.config, err );
 	process.exit( 1 );
 }
 

@@ -44,14 +44,14 @@ var logger = require( 'winston' );
 var config = require( './defaults.js' );
 // local configuration overrides
 while (config.config) {
-    var config_file = config.config;
-    delete config.config;
-    try {
-	fs.statSync(config_file);
-    } catch (e) {
-	break; // file not present
-    }
-    config = require( config_file )( config ) || config;
+	var config_file = config.config;
+	delete config.config;
+	try {
+		fs.statSync(config_file);
+	} catch (e) {
+		break; // file not present
+	}
+	config = require( config_file )( config ) || config;
 }
 // parse command-line options (with a possible additional config file override)
 commander

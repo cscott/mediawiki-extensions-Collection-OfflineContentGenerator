@@ -38,6 +38,8 @@
     "winston-posix-syslog": "0.0.7"
   },
   "devDependencies": {
-    "jshint": ">=2.3.0"
+    "jshint": ">=2.3.0",
+    "request": "~2.44.0",
+    "mw-ocg-bundler": "wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-bundler#master"
   }
 }

@@ -16,6 +16,8 @@ program
 	.option('-a, --api <url>',
 			// `ssh -L 17080:ocg.svc.eqiad.wmnet:8000 tin` might be handy!
 			'OCG service API root', 'http://localhost:17080')
+	.option('-f, --format <writer>',
+			'Use the supplied backend [rdf2latex]', 'rdf2latex')
 	.option('-p, --prefix <prefix>',
 			'Restrict pages to those found in the given prefix', null)
 	.option('-j, --jobs <N>',
@@ -83,7 +85,7 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 			pool: false,
 			form: {
 				command: 'render',
-				writer: 'rdf2latex',
+				writer: program.format,
 				metabook: JSON.stringify(metabook),
 				force_render: 'true'
 			}

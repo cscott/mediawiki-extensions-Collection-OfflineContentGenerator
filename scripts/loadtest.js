@@ -18,7 +18,7 @@ program
 			'OCG service API root', 'http://localhost:17080')
 	.option('-p, --prefix <prefix>',
 			'Restrict pages to those found in the given prefix', null)
-	.option('-j <N>',
+	.option('-j, --jobs <N>',
 			'How many jobs to queue at once [10]', 10)
 	.option('--limit <N>',
 			'Only queue the first N pages', null)
@@ -67,7 +67,7 @@ var failedInject = mkout('failed-inject.txt');
 var failedRender = mkout('failed-render.txt');
 var passedRender = mkout('passed-render.txt');
 
-var doOne = Promise.guard(+program.j || 10, function(prefix, title) {
+var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
     var collection_id;
     console.log(prefix, title);
     return bundler.metabook.fromArticles(

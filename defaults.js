@@ -71,6 +71,11 @@ module.exports = {
 				"extension": ".txt"
 			}
 		},
+		/* Compatibility aliases for the writer strings. */
+		"writer_aliases": {
+			// mwlib compatibility
+			"rl": "rdf2text"
+		},
 
 		/** {string} Working directory for the service. If null will be in the OS temp dir. */
 		"temp_dir": null,

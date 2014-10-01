@@ -66,6 +66,10 @@ var mkout = function(name) {
 var failedInject = mkout('failed-inject.txt');
 var failedRender = mkout('failed-render.txt');
 var passedRender = mkout('passed-render.txt');
+var failedGroups = mkout('failed-groups.txt');
+
+var crashGroups = {};
+var notSure = "~ Not sure ~";
 
 var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 	var collection_id;
@@ -117,8 +121,18 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 						'Bad status check: ' + response.statusCode
 					);
 				}
-				var state = JSON.parse(body).state;
+				body = JSON.parse(body);
+				var state = body.state, status = body.status;
 				if (/^(failed|finished)$/.test(state)) {
+					if ( state === "failed" ) {
+						var group = (status && status.status) || notSure,
+							page = prefix + " " + title;
+						if ( Array.isArray(crashGroups[group]) ) {
+							crashGroups[group].push( page );
+						} else {
+							crashGroups[group] = [ page ];
+						}
+					}
 					return state;
 				}
 				if (!/^(pending|progress)$/.test(state)) {
@@ -165,8 +179,23 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 
 Promise.map(titles, function(article) {
 	return doOne(article.prefix, article.title);
+}).then(function() {
+	var groups = Object.keys(crashGroups);
+	groups.sort(function(a, b) {
+		if (a === notSure || b === notSure) {
+			return (a === notSure) ? 1 : -1;
+		}
+		return crashGroups[b].length - crashGroups[a].length;
+	});
+	groups.forEach(function(group) {
+		failedGroups.write(group + (new Array(group === notSure ? 5 : 3)).join("\n"));
+		crashGroups[group].forEach(function(page) {
+			failedGroups.write(page + "\n");
+		});
+		failedGroups.write("\n\n");
+	});
 }).finally(function() {
-	return Promise.map([failedInject, failedRender, passedRender], function(s) {
+	return Promise.map([failedInject, failedRender, passedRender, failedGroups], function(s) {
 		return new Promise(function(resolve, reject) {
 			return s.end(function(error) {
 				if (error) { return reject(error); }

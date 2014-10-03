@@ -57,6 +57,7 @@ module.exports = {
 
 				"bin": "../mw-ocg-latexer/bin/mw-ocg-latexer",
 				"additionalArgs": [],
+				"mimeType": "application/pdf",
 				"extension": ".pdf"
 			},
 			"rdf2text": {
@@ -68,6 +69,7 @@ module.exports = {
 
 				"bin": "../mw-ocg-texter/bin/mw-ocg-texter",
 				"additionalArgs": [],
+				"mimeType": "text/plain",
 				"extension": ".txt"
 			}
 		},

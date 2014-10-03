@@ -140,8 +140,8 @@ module.exports = {
 		/** Lifetime, in seconds, of an object in the temp file system. Must be longer
 		 * than the longest expected job runtime. (We check ctime not atime)
 		 */
-	  	temp_file_lifetime: 0.5 * 24 * 60 * 60,
+		temp_file_lifetime: 0.25 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of an object in the post mortem directory. */
-	  	postmortem_file_lifetime: 5 * 24 * 60 * 60
+		postmortem_file_lifetime: 1 * 24 * 60 * 60
 	}
 };

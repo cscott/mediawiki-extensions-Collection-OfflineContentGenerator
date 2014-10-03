@@ -132,9 +132,9 @@ module.exports = {
 		/** Seconds between garbage collection runs */
 		every: 0.25 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of a job status object in redis */
-		job_lifetime: 3 * 24 * 60 * 60,
+		job_lifetime: 2 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of any successful job artifacts on the file system */
-		job_file_lifetime: 3.5 * 24 * 60 * 60,
+		job_file_lifetime: 2.25 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of a job status object that failed in redis */
 		failed_job_lifetime: 24 * 60 * 60,
 		/** Lifetime, in seconds, of an object in the temp file system. Must be longer

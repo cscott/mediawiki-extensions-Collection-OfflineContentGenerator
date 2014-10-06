@@ -42,7 +42,7 @@ module.exports = {
 			 */
 			"max_execution_time": 0,
 			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
-			"additionalArgs": [],
+			"additionalArgs": ['--no-compat'],
 
 			"parsoid_api": "http://localhost/",
 			"parsoid_prefix": "localhost"

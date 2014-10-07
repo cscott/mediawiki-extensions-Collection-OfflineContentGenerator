@@ -76,7 +76,7 @@ module.exports = {
 		/* Compatibility aliases for the writer strings. */
 		"writer_aliases": {
 			// mwlib compatibility
-			"rl": "rdf2text"
+			"rl": "rdf2latex"
 		},
 
 		/** {string} Working directory for the service. If null will be in the OS temp dir. */

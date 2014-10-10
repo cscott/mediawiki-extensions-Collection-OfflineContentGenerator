@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "homepage": "https://www.mediawiki.org/wiki/Extension:Collection",
   "bugs": {
-    "url": "https://bugzilla.wikimedia.org/enter_bug.cgi?product=MediaWiki%20extensions&component=Collection"
+    "url": "https://bugzilla.wikimedia.org/enter_bug.cgi?product=OCG"
   },
   "bin": "./mw-ocg-service.js",
   "scripts": {

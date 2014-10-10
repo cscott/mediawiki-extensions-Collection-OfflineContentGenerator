@@ -84,12 +84,29 @@ Be aware of these when deploying to a new node version or machine
 architecture.  You may need to `npm rebuild <package name>`.
 
 ## Logging
-This software uses the winston logging framework. By default the framework
+This software uses the bunyan logging framework. By default the framework
 only logs to the system console. To add additional log transports and make it
 useful, in the config file add lines like:
 
 ```
-logger.add( require( 'winston-posix-syslog' ).PosixSyslog, {} );
+var bsyslog = require('bunyan-syslog');
+config.logging = {
+  streams: [{
+    stream: process.stdout
+  }, {
+    level: 'debug',
+    type: 'raw',
+    stream: bsyslog.createBunyanStream({
+      type: 'sys',
+      facility: bsyslog.local0,
+      name: 'mw-ocg-service'
+    })
+  }, {
+    type: 'raw',
+    stream: require('gelf-stream').forBunyan( '..host..', PORT)
+  }],
+  serializers: ... /* optional */
+}
 ```
 
 ## Maintenance

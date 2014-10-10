@@ -32,74 +32,20 @@
  * @file
  */
 
+var cli = require( './lib/cli.js' );
 var cluster = require( 'cluster' );
 var commander = require( 'commander' );
-var fs = require('fs');
-var path = require( 'path' );
-var StatsD = require( './lib/statsd.js' );
 var os = require( 'os' );
-var logger = require( 'winston' );
 
-/* === Configuration Options & File ======================================== */
-var config = require( './defaults.js' );
-// local configuration overrides
-while (config.config) {
-	var config_file = config.config;
-	delete config.config;
-	try {
-		fs.statSync(config_file);
-	} catch (e) {
-		break; // file not present
-	}
-	config = require( config_file )( config ) || config;
-}
 // parse command-line options (with a possible additional config file override)
 commander
 	.version( '0.0.1' )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.parse( process.argv );
 
-try {
-	if ( commander.config ) {
-		if ( path.resolve( commander.config ) !== path.normalize( commander.config ) ) {
-			// If the configuration path given is relative, resolve it to be relative
-			// to the current working directory instead of relative to the path of this
-			// file.
-			commander.config = path.resolve( process.cwd(), commander.config );
-		}
-		config = require( commander.config )( config ) || config;
-	}
-} catch ( err ) {
-	console.error( "Could not open configuration file %s! %s", commander.config, err );
-	process.exit( 1 );
-}
-
-/* === Initial Logging ===================================================== */
-// Remove the default logger
-logger.remove( logger.transports.Console );
-// Now go through the hash and add all the required transports
-for ( var transport in config.logging ) {
-	if ( config.logging.hasOwnProperty( transport ) ) {
-		var parts = transport.split( '/' );
-		var classObj = require( parts.shift() );
-		parts.forEach( function( k ) {
-			classObj = classObj[k];
-		} );
-		logger.add( classObj, config.logging[transport] );
-	}
-}
-logger.extend( console );
-
-global.statsd = new StatsD(
-	config.reporting.statsd_server,
-	config.reporting.statsd_port,
-	config.reporting.prefix,
-	'',
-	config.reporting.is_txstatsd,
-	false, // Don't globalize, we're doing that here
-	true,  // Do cache DNS queries
-	config.reporting.enable
-);
+var config = cli.parseConfig( commander.config );
+cli.setupLogging( config );
+cli.setupStatsD( config );
 
 /* === Fork the heck out of ourselves! ========================================
  * The basic idea is that we have this controlling process which launches and

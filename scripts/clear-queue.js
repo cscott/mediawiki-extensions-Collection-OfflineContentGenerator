@@ -31,62 +31,19 @@ require( 'es6-shim' );
 require( 'prfun' );
 
 var commander = require( 'commander' );
-var fs = require( 'fs' );
-var logger = require( 'winston' );
-var path = require( 'path' );
+var cli = require( '../lib/cli.js' );
 
 var jd = require( '../lib/JobDetails.js' );
 var Redis = require( '../lib/RedisWrapper.js' );
 var redisClient = null;
 
-/* === Configuration Options & File ======================================== */
-var config = require( '../defaults.js' );
-// local configuration overrides
-while (config.config) {
-	var config_file = config.config;
-	delete config.config;
-	try {
-		fs.statSync(config_file);
-	} catch (e) {
-		break; // file not present
-	}
-	config = require( config_file )( config ) || config;
-}
 commander
 	.version( '0.0.1' )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.parse( process.argv );
 
-try {
-	if ( commander.config ) {
-		if ( path.resolve( commander.config ) !== path.normalize( commander.config ) ) {
-			// If the configuration path given is relative, resolve it to be relative
-			// to the current working directory instead of relative to the path of this
-			// file.
-			commander.config = path.resolve( process.cwd(), commander.config );
-		}
-		config = require( commander.config )( config ) || config;
-	}
-} catch ( err ) {
-	console.error( "Could not open configuration file %s! %s", commander.config, err );
-	process.exit( 1 );
-}
-
-/* === Initial Logging ===================================================== */
-// Remove the default logger
-logger.remove( logger.transports.Console );
-// Now go through the hash and add all the required transports
-for ( var transport in config.logging ) {
-	if ( config.logging.hasOwnProperty( transport ) ) {
-		var parts = transport.split( '/' );
-		var classObj = require( parts.shift() );
-		parts.forEach( function( k ) {
-			classObj = classObj[k];
-		} );
-		logger.add( classObj, config.logging[transport] );
-	}
-}
-logger.extend( console );
+var config = cli.parseConfig( commander.config );
+cli.setupLogging( config );
 
 /* === Do the deed ========================================================
  * Basically, we check the number of entries in the list before, and then

@@ -42,7 +42,9 @@ module.exports = {
 			 */
 			"max_execution_time": 0,
 			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
-			"additionalArgs": ['--no-compat'],
+			// turn off some mwlib compatibility features which bloat the bundle
+			// set a maximum image size: 150dpi * 4" wide image.
+			"additionalArgs": ['--no-compat', '--size=600'],
 
 			"parsoid_api": "http://localhost/",
 			"parsoid_prefix": "localhost"

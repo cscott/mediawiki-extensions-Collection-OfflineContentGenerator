@@ -31,7 +31,12 @@ module.exports = {
 	"frontend": {
 		"address": null,
 		"socket": null,
-		"port": 17080
+		"port": 17080,
+		/** Failed jobs won't be retried until afer the lockout time (in seconds).
+		 * Should be <= garbage_collection.failed_job_lifetime
+		 * A value of zero means that no time limit is enforced.
+		 */
+		"failed_job_lockout_time": 0
 	},
 	/** Configuration for the backend bundling & and rendering process threads. */
 	"backend": {

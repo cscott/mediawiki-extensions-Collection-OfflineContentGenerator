@@ -50,7 +50,7 @@ cli.setupStatsD( config );
 /* === Fork the heck out of ourselves! ========================================
  * The basic idea is that we have this controlling process which launches and
  * maintains a configurable number of child threads. The type of thread a child
- * should be is placed into the COLLECTOID_CHILD_TYPE environment variable.
+ * should be is placed into the OCG_SERVICE_CHILD_TYPE environment variable.
  *
  * Children must
  * -- have a basic API of init(config), start(), and stop(callback)
@@ -110,7 +110,7 @@ if ( cluster.isMaster ) {
 		var newWorker = null;
 		lastRestart[workerType] = Date.now();
 		statsd.increment( workerType + '.restarts' );
-		newWorker = cluster.fork( {COLLECTOID_CHILD_TYPE: workerType} );
+		newWorker = cluster.fork( {OCG_SERVICE_CHILD_TYPE: workerType} );
 		workerTypes[newWorker.process.pid] = workerType;
 		console.debug( "Spawned %s worker with PID %s", workerType, newWorker.process.pid );
 	};
@@ -159,18 +159,18 @@ if ( cluster.isMaster ) {
 	};
 	var child;
 
-	if ( process.env.COLLECTOID_CHILD_TYPE in types ) {
-		child = require( types[process.env.COLLECTOID_CHILD_TYPE] );
+	if ( process.env.OCG_SERVICE_CHILD_TYPE in types ) {
+		child = require( types[process.env.OCG_SERVICE_CHILD_TYPE] );
 	} else {
 		console.error(
-			'Could not launch child of type "%s", terminating', process.env.COLLECTOID_CHILD_TYPE
+			'Could not launch child of type "%s", terminating', process.env.OCG_SERVICE_CHILD_TYPE
 		);
 		process.abort();
 	}
 
 	process.on( 'SIGINT', function () {
 		// Master wants us to die :(
-		console.debug( '%s worker received SIGINT', process.env.COLLECTOID_CHILD_TYPE );
+		console.debug( '%s worker received SIGINT', process.env.OCG_SERVICE_CHILD_TYPE );
 		child.stop( process.exit );
 	} );
 

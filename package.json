@@ -1,7 +1,7 @@
 {
   "name": "mw-ocg-service",
   "description": "Render service (Offline Content Generator) for the MediaWiki extension Collection",
-  "version": "1.0.0",
+  "version": "1.0.0-git",
   "homepage": "https://www.mediawiki.org/wiki/Extension:Collection",
   "bugs": {
     "url": "https://bugzilla.wikimedia.org/enter_bug.cgi?product=OCG"

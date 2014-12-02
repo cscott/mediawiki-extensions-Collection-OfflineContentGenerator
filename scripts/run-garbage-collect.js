@@ -35,7 +35,7 @@ var commander = require( 'commander' );
 
 // parse command-line options (with a possible additional config file override)
 commander
-	.version( '0.0.1' )
+	.version( cli.version )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.parse( process.argv );
 

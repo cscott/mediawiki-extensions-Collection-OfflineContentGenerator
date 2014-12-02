@@ -38,7 +38,7 @@ var Redis = require( '../lib/RedisWrapper.js' );
 var redisClient = null;
 
 commander
-	.version( '0.0.1' )
+	.version( cli.version )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.parse( process.argv );
 

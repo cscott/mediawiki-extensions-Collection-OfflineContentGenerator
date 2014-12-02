@@ -10,8 +10,10 @@ var fs = require('fs');
 var path = require('path');
 var request = Promise.promisify(require('request'), true);
 
+var cli = require( '../lib/cli.js' );
+
 program
-	.version('1.0.0')
+	.version( cli.version )
 	.usage('[options] [pages.list]')
 	.option('-a, --api <url>',
 			// `ssh -L 17080:ocg.svc.eqiad.wmnet:8000 tin` might be handy!

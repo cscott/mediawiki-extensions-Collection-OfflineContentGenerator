@@ -119,4 +119,5 @@ gc.singleRun(function() {
 			process.exit(1);
 		}
 	}
+	process.exit(0);
 }).done();

@@ -56,7 +56,7 @@ commander
 	.usage('[options] <hostname ...>')
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
 	.option( '-f, --force', 'Remove even pending jobs' )
-	.option( '--quiet', "Don't add stdout to configured loggers")
+	.option( '-q, --quiet', "Don't add stdout to configured loggers")
 	.parse( process.argv );
 
 var config = cli.parseConfig( commander.config );

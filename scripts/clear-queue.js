@@ -40,10 +40,11 @@ var redisClient = null;
 commander
 	.version( cli.version )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
+	.option( '-q, --quiet', "Don't add stdout to configured loggers")
 	.parse( process.argv );
 
 var config = cli.parseConfig( commander.config );
-cli.setupLogging( config );
+cli.setupLogging( config, !commander.quiet );
 
 /* === Do the deed ========================================================
  * Basically, we check the number of entries in the list before, and then

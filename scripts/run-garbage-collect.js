@@ -37,10 +37,11 @@ var commander = require( 'commander' );
 commander
 	.version( cli.version )
 	.option( '-c, --config <path>', 'Path to the local configuration file' )
+	.option( '-q, --quiet', "Don't add stdout to configured loggers")
 	.parse( process.argv );
 
 var config = cli.parseConfig( commander.config );
-cli.setupLogging( config );
+cli.setupLogging( config, !commander.quiet );
 cli.setupStatsD( config );
 
 /* === Do the deed ========================================================= */

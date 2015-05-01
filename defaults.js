@@ -51,8 +51,9 @@ module.exports = {
 			// set a maximum image size: 150dpi * 4" wide image.
 			"additionalArgs": ['--no-compat', '--size=600'],
 
-			"parsoid_api": "http://localhost/",
-			"parsoid_prefix": "localhost"
+			"restbase_api": null,
+			"parsoid_api": null,
+			"parsoid_prefix": null,
 		},
 		"writers": {
 			"rdf2latex": {

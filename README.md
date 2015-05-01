@@ -30,7 +30,7 @@ $OCG/mw-ocg-texter
 
 If you have installed [VisualEditor], no additional configuration will
 be necessary: OCG will use the VisualEditor configuration to find an
-appropriate Parsoid service and prefix.
+appropriate RESTBase or Parsoid service and prefix.
 
 In the absence of VisualEditor, you will still need to install
 [Parsoid], and then configure OCG to use it.  You will launch
@@ -43,6 +43,8 @@ module.exports = function(config) {
   config.backend.bundler.parsoid_api = "http://localhost:8000";
   // the prefix here should match $wgDBname in your LocalSettings.php
   config.backend.bundler.parsoid_prefix = "localhost";
+  // Use the Parsoid "v1" API
+  config.backend.bundler.additionalArgs = [ '--api-version=parsoid1' ];
 }
 ```
 

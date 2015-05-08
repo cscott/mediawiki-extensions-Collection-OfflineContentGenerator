@@ -27,8 +27,8 @@
  * @file
  */
 
-require( 'es6-shim' );
-require( 'prfun' );
+require( 'core-js/shim' );
+var Promise = require( 'prfun' );
 
 var cli = require( '../lib/cli.js' );
 var commander = require( 'commander' );

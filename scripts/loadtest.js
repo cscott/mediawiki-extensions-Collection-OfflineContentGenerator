@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 "use strict";
-require('es6-shim');
-require('prfun');
+require('core-js/shim');
+var Promise = require('prfun');
 
 var program = require('commander');
 var bundler = require('mw-ocg-bundler');

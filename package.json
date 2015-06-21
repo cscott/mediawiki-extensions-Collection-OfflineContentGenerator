@@ -17,7 +17,7 @@
   "keywords": [
     "mediawiki"
   ],
-  "license": "GPLv2",
+  "license": "GPL-2.0",
   "dependencies": {
     "bunyan": "~1.1.3",
     "busboy": "0.0.12",

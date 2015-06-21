@@ -19,7 +19,7 @@
   ],
   "license": "GPL-2.0",
   "dependencies": {
-    "bunyan": "~1.1.3",
+    "bunyan": "~1.4.0",
     "busboy": "0.0.12",
     "commander": "~2.5.0",
     "core-js": "~0.9.1",
@@ -34,8 +34,8 @@
   "optionalDependencies": {
     "hiredis": "~0.1.15",
     "bunyan-prettystream": "cscott/node-bunyan-prettystream#master",
-    "bunyan-syslog": "~0.2.2",
-    "gelf-stream": "~0.2.4"
+    "bunyan-syslog": "~0.3.0",
+    "gelf-stream": "~1.0.3"
   },
   "devDependencies": {
     "jshint": "~2.6.3",

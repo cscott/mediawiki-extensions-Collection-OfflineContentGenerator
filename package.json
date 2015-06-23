@@ -32,10 +32,10 @@
     "sprintf-js": "0.0.7"
   },
   "optionalDependencies": {
-    "hiredis": "~0.1.15",
     "bunyan-prettystream": "cscott/node-bunyan-prettystream#master",
     "bunyan-syslog": "~0.3.0",
-    "gelf-stream": "~1.0.3"
+    "gelf-stream": "~1.0.3",
+    "hiredis": "~0.4.0"
   },
   "devDependencies": {
     "jshint": "~2.6.3",

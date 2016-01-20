@@ -7,131 +7,131 @@
  */
 module.exports = {
 	/** Location of local configuration override(s) (if present) */
-	"config": "/etc/mw-collection-ocg.js",
+	config: '/etc/mw-collection-ocg.js',
 
 	/** Service management thread, coordinates (re)launching threads and initial global setup */
-	"coordinator": {
+	coordinator: {
 		/** The number of frontend threads to spawn. At the moment we don't have good data on how
 		 * many clients can be served via a thread in a production environment.
 		 */
-		"frontend_threads": 2,
+		frontend_threads: 2,
 		/** The number of backend threads to spawn. These are heavy rendering threads and so should
 		 * be set to some ratio of CPU cores. If set to "auto" the coordinator will launch a thread
 		 * per CPU core.
 		 */
-		"backend_threads": "auto",
+		backend_threads: 'auto',
 
 		/** Public hostname of this instance for HTTP GET requests for locally stored content. */
-		"hostname": null
+		hostname: null,
 	},
 	/** Configuration for the frontend HTTP server thread. You can choose to serve
 	 * content via a local socket, or an IP address. If both are null the server will
 	 * bind to all IP addresses.
 	 */
-	"frontend": {
-		"address": null,
-		"socket": null,
-		"port": 17080,
+	frontend: {
+		address: null,
+		socket: null,
+		port: 17080,
 		/** Failed jobs won't be retried until afer the lockout time (in seconds).
 		 * Should be <= garbage_collection.failed_job_lifetime
 		 * A value of zero means that no time limit is enforced.
 		 */
-		"failed_job_lockout_time": 0
+		failed_job_lockout_time: 0,
 	},
 	/** Configuration for the backend bundling & and rendering process threads. */
-	"backend": {
-		"bundler": {
+	backend: {
+		bundler: {
 			/** {int} Maximum time, in seconds, that the process will be allowed to execute.
 			 * After the expiration time a SIGTERM will be issued. A value of zero means that
 			 * no time limit is enforced.
 			 */
-			"max_execution_time": 0,
-			"bin": "../mw-ocg-bundler/bin/mw-ocg-bundler",
-			// turn off some mwlib compatibility features which bloat the bundle
-			// set a maximum image size: 150dpi * 4" wide image.
-			"additionalArgs": ['--no-compat', '--size=600'],
+			max_execution_time: 0,
+			bin: '../mw-ocg-bundler/bin/mw-ocg-bundler',
+			// Turn off some mwlib compatibility features which bloat the bundle
+			// Set a maximum image size: 150dpi * 4" wide image.
+			additionalArgs: ['--no-compat', '--size=600'],
 
-			"restbase_api": null,
-			"parsoid_api": null,
-			"parsoid_prefix": null,
+			restbase_api: null,
+			parsoid_api: null,
+			parsoid_prefix: null,
 		},
-		"writers": {
-			"rdf2latex": {
+		writers: {
+			rdf2latex: {
 				/** {int} Maximum time, in seconds, that the process will be allowed to execute.
 				 * After the expiration time a SIGTERM will be issued. A value of zero means that
 				 * no time limit is enforced.
 				 */
-				"max_execution_time": 0,
+				max_execution_time: 0,
 
-				"bin": "../mw-ocg-latexer/bin/mw-ocg-latexer",
-				"additionalArgs": [],
-				"mimeType": "application/pdf",
-				"extension": ".pdf"
+				bin: '../mw-ocg-latexer/bin/mw-ocg-latexer',
+				additionalArgs: [],
+				mimeType: 'application/pdf',
+				extension: '.pdf',
 			},
-			"rdf2text": {
+			rdf2text: {
 				/** {int} Maximum time, in seconds, that the process will be allowed to execute.
 				 * After the expiration time a SIGTERM will be issued. A value of zero means that
 				 * no time limit is enforced.
 				 */
-				"max_execution_time": 0,
+				max_execution_time: 0,
 
-				"bin": "../mw-ocg-texter/bin/mw-ocg-texter",
-				"additionalArgs": [],
-				"mimeType": "text/plain",
-				"extension": ".txt"
-			}
+				bin: '../mw-ocg-texter/bin/mw-ocg-texter',
+				additionalArgs: [],
+				mimeType: 'text/plain',
+				extension: '.txt',
+			},
 		},
 		/* Compatibility aliases for the writer strings. */
-		"writer_aliases": {
-			// mwlib compatibility
-			"rl": "rdf2latex"
+		writer_aliases: {
+			// This is for mwlib compatibility.
+			rl: 'rdf2latex',
 		},
 
 		/** {string} Working directory for the service. If null will be in the OS temp dir. */
-		"temp_dir": null,
+		temp_dir: null,
 		/** {string} Directory for final rendered output. If null will be temp_dir/ocg-output */
-		"output_dir": null,
+		output_dir: null,
 		/** {string|null} Directory where failed jobs will be stored. If null will not be stored. */
-		"post_mortem_dir": null
+		post_mortem_dir: null,
 	},
 	/** Redis is used in both the frontend and backend for queueing jobs and job
 	 * metadata storage.
 	 */
-	"redis": {
-		"host": "localhost",
-		"port": 6379,
-		"password": null,
-		"retry_max_delay": 60000,
+	redis: {
+		host: 'localhost',
+		port: 6379,
+		password: null,
+		retry_max_delay: 60000,
 
-		"job_queue_name": "ocg_render_job_queue",
-		"status_set_name": "ocg_job_status",
+		job_queue_name: 'ocg_render_job_queue',
+		status_set_name: 'ocg_job_status',
 
 		/** {int} When the job queue is larger than this, new jobs will be rejected. A zero value
 		 * means no limit to the number of jobs that can be in the queue.
 		 */
-		"max_job_queue_length": 0
+		max_job_queue_length: 0,
 	},
 	/** Active metric reporting via the StatsD protocol. General health can be obtained by querying
 	 * the frontend with a HTTP GET ?request=health query
 	 */
-	"reporting": {
+	reporting: {
 		/** If true will send UDP packets to the StatsD server. */
-		"enable": false,
+		enable: false,
 		/** Hostname to send StatsD metrics to. */
-		"statsd_server": "localhost",
+		statsd_server: 'localhost',
 		/** Port to send StatsD metrics to. */
-		"statsd_port": 8125,
+		statsd_port: 8125,
 		/** The txstatsd daemon can have non standard behaviour. If you're running the
 		 * ConfigurableCollector set this to true.
 		 */
-		"is_txstatsd": false,
+		is_txstatsd: false,
 		/** Prefix for all statistics generated by this application */
-		"prefix": "ocg.pdf."
+		prefix: 'ocg.pdf.',
 	},
 	/** Bunyan logging configuration.  `streams` and `serializers` are the
 	 * important properties here. */
-	"logging": {
-		/*
+	logging: {
+		/* Example configuration:
 		streams: [
 			{
 				// Bare bones console output
@@ -157,7 +157,7 @@ module.exports = {
 		*/
 	},
 	/** Garbage collection thread */
-	"garbage_collection": {
+	garbage_collection: {
 		/** Seconds between garbage collection runs */
 		every: 0.25 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of a job status object in redis */
@@ -171,6 +171,6 @@ module.exports = {
 		 */
 		temp_file_lifetime: 0.25 * 24 * 60 * 60,
 		/** Lifetime, in seconds, of an object in the post mortem directory. */
-		postmortem_file_lifetime: 1 * 24 * 60 * 60
-	}
+		postmortem_file_lifetime: 1 * 24 * 60 * 60,
+	},
 };

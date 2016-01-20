@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Collection Extension render wrangler
@@ -32,20 +32,20 @@
  * @file
  */
 
-var cli = require( './lib/cli.js' );
-var cluster = require( 'cluster' );
-var commander = require( 'commander' );
-var os = require( 'os' );
+var cli = require('./lib/cli.js');
+var cluster = require('cluster');
+var commander = require('commander');
+var os = require('os');
 
-// parse command-line options (with a possible additional config file override)
+// Parse command-line options (with a possible additional config file override).
 commander
-	.version( cli.version )
-	.option( '-c, --config <path>', 'Path to the local configuration file' )
-	.parse( process.argv );
+	.version(cli.version)
+	.option('-c, --config <path>', 'Path to the local configuration file')
+	.parse(process.argv);
 
-var config = cli.parseConfig( commander.config );
-cli.setupLogging( config );
-cli.setupStatsD( config );
+var config = cli.parseConfig(commander.config);
+cli.setupLogging(config);
+cli.setupStatsD(config);
 
 /* === Fork the heck out of ourselves! ========================================
  * The basic idea is that we have this controlling process which launches and
@@ -60,7 +60,7 @@ cli.setupStatsD( config );
  * shutdown.
  * */
 
-if ( cluster.isMaster ) {
+if (cluster.isMaster) {
 	var respawnWorkers = true;
 	var workerTypes = {};
 	var lastRestart = {};
@@ -70,20 +70,20 @@ if ( cluster.isMaster ) {
 	/* --- Thread management --- */
 	var gracefulShutdown = function gracefulShutdown() {
 		respawnWorkers = false;
-		console.info( 'Beginning graceful shutdown' );
+		console.info('Beginning graceful shutdown');
 
-		for ( var id in cluster.workers ) {
-			console.info( 'Sending shutdown command to worker %s', id );
-			cluster.workers[id].kill( 'SIGINT' );
+		for (var id in cluster.workers) {
+			console.info('Sending shutdown command to worker %s', id);
+			cluster.workers[id].kill('SIGINT');
 		}
 
-		var infoAndExit = function () {
-			var stillAlive = Object.keys( cluster.workers ).length;
-			if ( stillAlive > 0 ) {
-				console.info( 'Still awaiting death of %d workers', stillAlive );
-				setTimeout( infoAndExit, 1000 );
+		var infoAndExit = function() {
+			var stillAlive = Object.keys(cluster.workers).length;
+			if (stillAlive > 0) {
+				console.info('Still awaiting death of %d workers', stillAlive);
+				setTimeout(infoAndExit, 1000);
 			} else {
-				console.info( 'All threads killed. Exiting.' );
+				console.info('All threads killed. Exiting.');
 				process.exit();
 			}
 		};
@@ -92,75 +92,75 @@ if ( cluster.isMaster ) {
 
 	var immediateShutdown = function immediateShutdown() {
 		respawnWorkers = false;
-		console.info( 'Shutting down immediately' );
+		console.info('Shutting down immediately');
 
 		var workers = cluster.workers;
-		Object.keys( workers ).forEach( function ( id ) {
-			console.info( 'Killing worker %s', id );
+		Object.keys(workers).forEach(function(id) {
+			console.info('Killing worker %s', id);
 			workers[id].destroy();
-		} );
-		process.exit( 1 );
+		});
+		process.exit(1);
 	};
 
-	process.on( 'SIGINT', gracefulShutdown );
-	process.on( 'SIGTERM', gracefulShutdown );
-	process.on( 'SIGHUP', immediateShutdown );
+	process.on('SIGINT', gracefulShutdown);
+	process.on('SIGTERM', gracefulShutdown);
+	process.on('SIGHUP', immediateShutdown);
 
-	var spawnWorker = function spawnWorker( workerType ) {
+	var spawnWorker = function spawnWorker(workerType) {
 		var newWorker = null;
 		lastRestart[workerType] = Date.now();
-		statsd.increment( workerType + '.restarts' );
-		newWorker = cluster.fork( {OCG_SERVICE_CHILD_TYPE: workerType} );
+		statsd.increment(workerType + '.restarts');
+		newWorker = cluster.fork({OCG_SERVICE_CHILD_TYPE: workerType});
 		workerTypes[newWorker.process.pid] = workerType;
-		console.debug( "Spawned %s worker with PID %s", workerType, newWorker.process.pid );
+		console.debug('Spawned %s worker with PID %s', workerType, newWorker.process.pid);
 	};
 
-	cluster.on( 'disconnect', function ( worker ) {
+	cluster.on('disconnect', function(worker) {
 		console.info(
 			'Worker (pid %d) has disconnected. Suicide: %s. Restarting: %s.',
 			worker.process.pid,
 			worker.suicide,
 			respawnWorkers
 		);
-		if ( respawnWorkers ) {
-			if ( lastRestart[workerTypes[worker.process.pid]] > Date.now() - 1000 ) {
+		if (respawnWorkers) {
+			if (lastRestart[workerTypes[worker.process.pid]] > Date.now() - 1000) {
 				// Only allow a restart of a backend thread once a second
 				console.info(
-					"Cannot immediately respawn thread. Waiting 1s to avoid forkbombing."
+					'Cannot immediately respawn thread. Waiting 1s to avoid forkbombing.'
 				);
-				setTimeout( spawnWorker, 1000, workerTypes[worker.process.pid] );
+				setTimeout(spawnWorker, 1000, workerTypes[worker.process.pid]);
 			} else {
-				spawnWorker( workerTypes[worker.process.pid] );
+				spawnWorker(workerTypes[worker.process.pid]);
 			}
 		}
 		delete workerTypes[worker.process.pid];
 	}
 	);
 
-	spawnWorker( 'gc' );
+	spawnWorker('gc');
 
-	for ( i = 0; i < config.coordinator.frontend_threads; i++ ) {
-		spawnWorker( 'frontend' );
+	for (i = 0; i < config.coordinator.frontend_threads; i++) {
+		spawnWorker('frontend');
 	}
 
 	autoThreads = config.coordinator.backend_threads;
-	if ( autoThreads === 'auto' ) {
+	if (autoThreads === 'auto') {
 		autoThreads = os.cpus().length;
 	}
-	for ( i = 0; i < autoThreads; i++ ) {
-		spawnWorker( 'backend' );
+	for (i = 0; i < autoThreads; i++) {
+		spawnWorker('backend');
 	}
 
 } else {
 	var types = {
-		'frontend': './lib/threads/frontend.js',
-		'backend':  './lib/threads/backend.js',
-		'gc': './lib/threads/gc.js'
+		frontend: './lib/threads/frontend.js',
+		backend:  './lib/threads/backend.js',
+		gc: './lib/threads/gc.js',
 	};
 	var child;
 
-	if ( process.env.OCG_SERVICE_CHILD_TYPE in types ) {
-		child = require( types[process.env.OCG_SERVICE_CHILD_TYPE] );
+	if (process.env.OCG_SERVICE_CHILD_TYPE in types) {
+		child = require(types[process.env.OCG_SERVICE_CHILD_TYPE]);
 	} else {
 		console.error(
 			'Could not launch child of type "%s", terminating', process.env.OCG_SERVICE_CHILD_TYPE
@@ -168,12 +168,12 @@ if ( cluster.isMaster ) {
 		process.abort();
 	}
 
-	process.on( 'SIGINT', function () {
+	process.on('SIGINT', function() {
 		// Master wants us to die :(
-		console.debug( '%s worker received SIGINT', process.env.OCG_SERVICE_CHILD_TYPE );
-		child.stop( process.exit );
-	} );
+		console.debug('%s worker received SIGINT', process.env.OCG_SERVICE_CHILD_TYPE);
+		child.stop(process.exit);
+	});
 
-	child.init( config );
+	child.init(config);
 	child.start();
 }

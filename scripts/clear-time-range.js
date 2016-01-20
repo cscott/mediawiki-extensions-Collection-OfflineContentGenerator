@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Collection Extension queue cleaning script.
@@ -38,25 +38,25 @@
  * @file
  */
 
-require( 'core-js/shim' );
-var Promise = require( 'prfun' );
+require('core-js/shim');
+var Promise = require('prfun');
 
-var cli = require( '../lib/cli.js' );
-var commander = require( 'commander' );
-var os = require( 'os' );
+var cli = require('../lib/cli.js');
+var commander = require('commander');
+var os = require('os');
 
-// parse command-line options (with a possible additional config file override)
+// Parse command-line options (with a possible additional config file override)
 commander
-	.version( cli.version )
+	.version(cli.version)
 	.usage('[options] <from date> <to date>')
-	.option( '-c, --config <path>', 'Path to the local configuration file' )
-	.option( '-f, --force', 'Remove even pending jobs' )
-	.option( '-q, --quiet', "Don't add stdout to configured loggers")
-	.parse( process.argv );
+	.option('-c, --config <path>', 'Path to the local configuration file')
+	.option('-f, --force', 'Remove even pending jobs')
+	.option('-q, --quiet', "Don't add stdout to configured loggers")
+	.parse(process.argv);
 
-var config = cli.parseConfig( commander.config );
-cli.setupLogging( config, !commander.quiet );
-cli.setupStatsD( config );
+var config = cli.parseConfig(commander.config);
+cli.setupLogging(config, !commander.quiet);
+cli.setupStatsD(config);
 
 if (commander.args.length !== 2) {
 	console.error(
@@ -70,8 +70,8 @@ var toDate = Date.parse(commander.args[1]);
 var inTime = function(t) { return t >= fromDate && t <= toDate; };
 
 /* === Do the deed ========================================================= */
-var gc = require( '../lib/threads/gc.js' );
-gc.init( config );
+var gc = require('../lib/threads/gc.js');
+gc.init(config);
 gc.singleRun(function() {
 	var startTime = Date.now();
 	var pending = 0;
@@ -93,13 +93,13 @@ gc.singleRun(function() {
 			return false;
 		}
 		if (/^(finished|failed)$/.test(job.state)) {
-			return true; /* delete this cache entry */
+			return true; /* Delete this cache entry. */
 		}
 		pending += 1;
 		if (commander.force) {
-			return true; /* force-remove this pending entry */
+			return true; /* Force-remove this pending entry. */
 		}
-		return false; /* don't remove it, it's still pending */
+		return false; /* Don't remove it, it's still pending. */
 	}).spread(function(total, deleted) {
 		console.info(
 			'Cleared %d (of %d total) entries from cache in %s seconds',
@@ -108,9 +108,9 @@ gc.singleRun(function() {
 		);
 		return pending;
 	});
-}).tap( function() {
-	return new Promise(function(resolve) { gc.stop( resolve ); });
-}).then( function(pending) {
+}).tap(function() {
+	return new Promise(function(resolve) { gc.stop(resolve); });
+}).then(function(pending) {
 	if (pending) {
 		if (commander.force) {
 			console.info(

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Collection Extension job queue empty script
@@ -27,24 +27,24 @@
  * @file
  */
 
-require( 'core-js/shim' );
-var Promise = require( 'prfun' );
+require('core-js/shim');
+var Promise = require('prfun');
 
-var commander = require( 'commander' );
-var cli = require( '../lib/cli.js' );
+var commander = require('commander');
+var cli = require('../lib/cli.js');
 
-var jd = require( '../lib/JobDetails.js' );
-var Redis = require( '../lib/RedisWrapper.js' );
+var jd = require('../lib/JobDetails.js');
+var Redis = require('../lib/RedisWrapper.js');
 var redisClient = null;
 
 commander
-	.version( cli.version )
-	.option( '-c, --config <path>', 'Path to the local configuration file' )
-	.option( '-q, --quiet', "Don't add stdout to configured loggers")
-	.parse( process.argv );
+	.version(cli.version)
+	.option('-c, --config <path>', 'Path to the local configuration file')
+	.option('-q, --quiet', "Don't add stdout to configured loggers")
+	.parse(process.argv);
 
-var config = cli.parseConfig( commander.config );
-cli.setupLogging( config, !commander.quiet );
+var config = cli.parseConfig(commander.config);
+cli.setupLogging(config, !commander.quiet);
 
 /* === Do the deed ========================================================
  * Basically, we check the number of entries in the list before, and then
@@ -65,53 +65,53 @@ redisClient.connect();
 console.info('connected to redis');
 
 function getMetabookIds() {
-	var size = Math.min( BATCH_SIZE, remaining );
-	console.info( 'Removing %s entries, %s remaining', size, remaining );
+	var size = Math.min(BATCH_SIZE, remaining);
+	console.info('Removing %s entries, %s remaining', size, remaining);
 
 	var trimMulti = redisClient.multi();
-	trimMulti.lrange( config.redis.job_queue_name, 0, size );
-	trimMulti.ltrim( config.redis.job_queue_name, size, -1 );
+	trimMulti.lrange(config.redis.job_queue_name, 0, size);
+	trimMulti.ltrim(config.redis.job_queue_name, size, -1);
 
 	remaining -= size;
-	Promise.promisify( trimMulti.exec, false, trimMulti )().then( getJobStatuses );
+	Promise.promisify(trimMulti.exec, false, trimMulti)().then(getJobStatuses);
 }
 
-function getJobStatuses( metabookIds ) {
+function getJobStatuses(metabookIds) {
 	var getMulti = redisClient.multi();
 
-	metabookIds[0].forEach( function( metabookId ) {
-		getMulti.hget( config.redis.status_set_name, metabookId );
-	} );
-	Promise.promisify( getMulti.exec, false, getMulti )().then( updateJobStatuses );
+	metabookIds[0].forEach(function(metabookId) {
+		getMulti.hget(config.redis.status_set_name, metabookId);
+	});
+	Promise.promisify(getMulti.exec, false, getMulti)().then(updateJobStatuses);
 }
 
-function updateJobStatuses( jsonJobDetails ) {
+function updateJobStatuses(jsonJobDetails) {
 	var updateMulti = redisClient.multi();
 	var job;
-	jsonJobDetails.forEach( function( jjd ) {
-		job = jd.fromJson( jjd );
-		if ( job.state === 'pending' ) {
-			job.updateError( 'Killed by administrative action' );
-			updateMulti.hset( config.redis.status_set_name, job.collectionId, job.toJson() );
+	jsonJobDetails.forEach(function(jjd) {
+		job = jd.fromJson(jjd);
+		if (job.state === 'pending') {
+			job.updateError('Killed by administrative action');
+			updateMulti.hset(config.redis.status_set_name, job.collectionId, job.toJson());
 		}
-	} );
-	Promise.promisify( updateMulti.exec, false, updateMulti )().then( function() {
+	});
+	Promise.promisify(updateMulti.exec, false, updateMulti)().then(function() {
 		console.info('return');
-		if ( remaining > 0 ) {
-			setTimeout( getMetabookIds, 1 );
+		if (remaining > 0) {
+			setTimeout(getMetabookIds, 1);
 		} else {
-			console.info( 'done' );
+			console.info('done');
 			redisClient.close();
 		}
-	} );
+	});
 }
 
 redisClient.on('opened', function() {
 	// Kick off the process by finding how many messages we have in the queue
-	redisClient.llen( config.redis.job_queue_name ).then( function( len ) {
+	redisClient.llen(config.redis.job_queue_name).then(function(len) {
 		remaining = len;
-	} ).then( function() {
+	}).then(function() {
 		// Now start the async loop
 		getMetabookIds();
-	} );
+	});
 });

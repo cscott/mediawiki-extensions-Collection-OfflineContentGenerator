@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Collection Extension garbage collection script
@@ -27,24 +27,24 @@
  * @file
  */
 
-require( 'core-js/shim' );
-var Promise = require( 'prfun' );
+require('core-js/shim');
+var Promise = require('prfun');
 
-var cli = require( '../lib/cli.js' );
-var commander = require( 'commander' );
+var cli = require('../lib/cli.js');
+var commander = require('commander');
 
-// parse command-line options (with a possible additional config file override)
+// Parse command-line options (with a possible additional config file override)
 commander
-	.version( cli.version )
-	.option( '-c, --config <path>', 'Path to the local configuration file' )
-	.option( '-q, --quiet', "Don't add stdout to configured loggers")
-	.parse( process.argv );
+	.version(cli.version)
+	.option('-c, --config <path>', 'Path to the local configuration file')
+	.option('-q, --quiet', "Don't add stdout to configured loggers")
+	.parse(process.argv);
 
-var config = cli.parseConfig( commander.config );
-cli.setupLogging( config, !commander.quiet );
-cli.setupStatsD( config );
+var config = cli.parseConfig(commander.config);
+cli.setupLogging(config, !commander.quiet);
+cli.setupStatsD(config);
 
 /* === Do the deed ========================================================= */
-var gc = require( '../lib/threads/gc.js' );
-gc.init( config );
-gc.singleRun().then( function() { gc.stop( process.exit ); } ).done();
+var gc = require('../lib/threads/gc.js');
+gc.init(config);
+gc.singleRun().then(function() { gc.stop(process.exit); }).done();

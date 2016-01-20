@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 require('core-js/shim');
 var Promise = require('prfun');
 
@@ -10,10 +10,10 @@ var fs = require('fs');
 var path = require('path');
 var request = Promise.promisify(require('request'), true);
 
-var cli = require( '../lib/cli.js' );
+var cli = require('../lib/cli.js');
 
 program
-	.version( cli.version )
+	.version(cli.version)
 	.usage('[options] [pages.list]')
 	.option('-a, --api <url>',
 			// `ssh -L 17080:ocg.svc.eqiad.wmnet:8000 tin` might be handy!
@@ -29,7 +29,7 @@ program
 	.option('-o, --output <fileprefix>',
 			'Save results to <fileprefix>-*.txt', null)
 	.option('--parsoid <url>',
-			// the default only works if you're testing pages on public wp
+			// The default only works if you're testing pages on public wp
 			'Parsoid API for article existence checks',
 			'http://parsoid-lb.eqiad.wikimedia.org/')
 	.option('-D, --debug',
@@ -39,10 +39,10 @@ program
 	})
 	.parse(process.argv);
 
-var pagefile = (program.args.length===0) ? path.join(__dirname, 'pages.list') :
+var pagefile = (program.args.length === 0) ? path.join(__dirname, 'pages.list') :
 	program.args[0];
 
-// read in `pages.list`
+// Read in `pages.list`
 var titles = require('fs').readFileSync(pagefile, 'utf8').
 	split(/(?:\n|\r\n?)+/g).reduce(function(prev, line) {
 		var m = /^([^:]+):([\s\S]+)$/.exec(line);
@@ -59,7 +59,7 @@ if (+program.limit) {
 	titles.length = +program.limit;
 }
 
-// create output files
+// Create output files
 var mkout = function(name) {
 	if (program.output) {
 		if (!/\/$/.test(program.output)) { name = '-' + name; }
@@ -73,17 +73,17 @@ var passedRender = mkout('passed-render.txt');
 var failedGroups = mkout('failed-groups.txt');
 
 var crashGroups = {};
-var notSure = "~ Not sure ~";
+var notSure = '~ Not sure ~';
 
 var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
-	var collection_id;
+	var collectionId;
 	console.log(prefix, title);
 	return bundler.metabook.fromArticles(
 		[ { prefix: prefix, title: title } ],
 		{}
 	).then(function(metabook) {
 		metabook.title = title;
-		// submit it!
+		// Submit it!
 		return request({
 			url: program.api,
 			method: 'POST',
@@ -93,11 +93,11 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 				command: 'render',
 				writer: program.format,
 				metabook: JSON.stringify(metabook),
-				force_render: 'true'
-			}
+				force_render: 'true',
+			},
 		}).spread(function(response, body) {
 			if (response.statusCode !== 200) {
-				throw new Error('Bad status: '+response.statusCode);
+				throw new Error('Bad status: ' + response.statusCode);
 			}
 			return body;
 		}).catch(function(error) {
@@ -110,15 +110,15 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 			throw e;
 		});
 	}).then(function(body) {
-		collection_id = JSON.parse(body).collection_id;
-		// check status until it's complete.
+		collectionId = JSON.parse(body).collection_id;
+		// Check status until it's complete.
 		var check = function() {
 			return request({
 				url: program.api,
 				qs: {
 					command: 'render_status',
-					collection_id: collection_id
-				}
+					collection_id: collectionId,
+				},
 			}).spread(function(response, body) {
 				if (response.statusCode !== 200) {
 					throw new Error(
@@ -128,11 +128,11 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 				body = JSON.parse(body);
 				var state = body.state, status = body.status;
 				if (/^(failed|finished)$/.test(state)) {
-					if ( state === "failed" ) {
+					if (state === 'failed') {
 						var group = (status && status.status) || notSure,
-							page = prefix + " " + title;
-						if ( Array.isArray(crashGroups[group]) ) {
-							crashGroups[group].push( page );
+							page = prefix + ' ' + title;
+						if (Array.isArray(crashGroups[group])) {
+							crashGroups[group].push(page);
 						} else {
 							crashGroups[group] = [ page ];
 						}
@@ -140,23 +140,23 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 					return state;
 				}
 				if (!/^(pending|progress)$/.test(state)) {
-					console.error( 'Job', collection_id, 'status', state);
+					console.error('Job', collectionId, 'status', state);
 				}
 				return Promise.delay(1000).then(check);
 			});
 		};
 		return check();
 	}).then(function(status) {
-		// double check that failed articles actually exist: sometimes
+		// Double check that failed articles actually exist: sometimes
 		// the title list contains deleted articles.
-		if (status==='failed' && program.parsoid) {
+		if (status === 'failed' && program.parsoid) {
 			return request({
 				url: program.parsoid.replace(/\/+$/, '') + '/' + prefix + '/' + title,
-				pool: false
+				pool: false,
 			}).spread(function(response, body) {
-				if (response.statusCode===500 &&
+				if (response.statusCode === 500 &&
 					/Did not find page revisions for /.test(body)) {
-					console.warn('*', prefix, title, "has been deleted *");
+					console.warn('*', prefix, title, 'has been deleted *');
 					return 'finished';
 				}
 				return status;
@@ -164,7 +164,7 @@ var doOne = Promise.guard(+program.jobs || 10, function(prefix, title) {
 		}
 		return status;
 	}).then(function(status) {
-		if (status==='finished') {
+		if (status === 'finished') {
 			passedRender.write(prefix + ':' + title + '\n');
 		} else {
 			failedRender.write(prefix + ':' + title + '\n');
@@ -192,11 +192,11 @@ Promise.map(titles, function(article) {
 		return crashGroups[b].length - crashGroups[a].length;
 	});
 	groups.forEach(function(group) {
-		failedGroups.write(group + (new Array(group === notSure ? 5 : 3)).join("\n"));
+		failedGroups.write(group + (new Array(group === notSure ? 5 : 3)).join('\n'));
 		crashGroups[group].forEach(function(page) {
-			failedGroups.write(page + "\n");
+			failedGroups.write(page + '\n');
 		});
-		failedGroups.write("\n\n");
+		failedGroups.write('\n\n');
 	});
 }).finally(function() {
 	return Promise.map([failedInject, failedRender, passedRender, failedGroups], function(s) {

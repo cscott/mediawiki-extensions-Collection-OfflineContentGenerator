@@ -43,7 +43,7 @@
     "hiredis": "~0.4.0"
   },
   "devDependencies": {
-    "jscs": "~2.1.1",
+    "jscs": "~2.5.0",
     "jshint": "~2.8.0",
     "request": "~2.64.0",
     "mw-ocg-bundler": "wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-bundler#master"

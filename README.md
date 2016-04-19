@@ -30,33 +30,44 @@ $OCG/mw-ocg-texter
 
 If you have installed [VisualEditor], no additional configuration will
 be necessary: OCG will use the VisualEditor configuration to find an
-appropriate RESTBase or Parsoid service and prefix.
+appropriate RESTBase or Parsoid service and prefix.  No special
+`localsettings.js` file will be required.
+
+## Installing a standalone OCG without Visual Editor
 
 In the absence of VisualEditor, you will still need to install
-[Parsoid], and then configure OCG to use it.  You will launch
-`mw-ocg-service` as `./mw-ocg-service.js -c localsettings.js` and
+[Parsoid], and then configure OCG to use it.  Use the instructions in
+the [Visual Editor configuration guide].
+
+You will also have to launch `mw-ocg-service` as
+`./mw-ocg-service.js -c localsettings.js` and
 create a `localsettings.js` file containing:
 ```javascript
 // for mw-ocg-service
 module.exports = function(config) {
-  // change the port here if you are running parsoid on a different port
+  // URL to the Parsoid instance
+  // Use port 8142 if you use the Debian package
   config.backend.bundler.parsoid_api = "http://localhost:8000";
-  // the prefix here should match $wgDBname in your LocalSettings.php
-  config.backend.bundler.parsoid_prefix = "localhost";
-  // Use the Parsoid "v1" API
-  config.backend.bundler.additionalArgs = [ '--api-version=parsoid1' ];
+  // Use the Parsoid "v3" API
+  // The "domainname" should match the "domain" in the setMwApi
+  // call in Parsoid's localsettings.js and the "domain" in mediawiki's
+  // $wgVirtualRestConfig in LocalSettings.php
+  config.backend.bundler.additionalArgs = [ '--domainname=localhost', '--api-version=parsoid3' ];
 }
 ```
 
+As described in the [Visual Editor configuration guide] mentioned above,
 Parsoid would in turn be configured with its own `localsettings.js`
 containing:
 ```javascript
 // for Parsoid
 exports.setup = function( parsoidConfig ) {
-  // first argument here should match $wgDBname in your LocalSettings.php
-  parsoidConfig.setInterwiki( 'localhost', 'http://localhost/path/to/your/mediawiki/api.php' );
-  // optional:
-  parsoidConfig.serverPort = 8000;
+  parsoidConfig.setMwApi({
+    uri: 'http://path/to/your/mediawiki/api.php',
+    domain: 'localhost',
+    // (optional) "prefix" should match $wgDBname in your LocalSettings.php
+    prefix: 'localhost'
+  });
 };
 ```
 
@@ -143,6 +154,7 @@ http://www.gnu.org/copyleft/gpl.html
 [mw-ocg-bundler]: https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-bundler
 [mw-ocg-latexer]: https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-latex_renderer
 [mw-ocg-texter]:  https://github.com/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator-text_renderer
+[Visual Editor configuration guide]:  https://www.mediawiki.org/wiki/Extension:VisualEditor#Linking_with_Parsoid
 
 [1]: https://david-dm.org/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator.png
 [2]: https://david-dm.org/wikimedia/mediawiki-extensions-Collection-OfflineContentGenerator
